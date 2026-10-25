@@ -1,5 +1,8 @@
 # GradeLens UAF
 
+[![Verify](https://github.com/zasclan/gradelens-uaf/actions/workflows/ci.yml/badge.svg)](https://github.com/zasclan/gradelens-uaf/actions/workflows/ci.yml)
+[![Live](https://img.shields.io/badge/live-GitHub%20Pages-b9f55b)](https://zasclan.github.io/gradelens-uaf/)
+
 A privacy-first academic result analyzer for University of Agriculture Faisalabad students. GradeLens calculates CGPA directly from transcript credit hours and quality points, compares clearly labelled repeat-course scenarios, and models future performance without transmitting student records to a server.
 
 > Independent student project. It is not affiliated with or endorsed by the University of Agriculture Faisalabad.
