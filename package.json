@@ -1,0 +1,13 @@
+{
+  "name": "gradelens-uaf",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "check": "node --check src/academic-engine.js && node --check src/app.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

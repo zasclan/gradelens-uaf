@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A privacy-first academic result analyzer for UAF students. Calculate CGPA, compare repeat policies, and plan future performance locally in your browser." />
+  <meta name="theme-color" content="#071a16" />
+  <title>GradeLens UAF — Private academic result analysis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="GradeLens home"><span class="brand-mark">G</span><span>GradeLens <b>UAF</b></span></a>
+    <nav><a href="#workspace">Workspace</a><a href="#method">Method</a><a href="https://github.com/zasclan/gradelens-uaf">Source</a></nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">PRIVATE BY DESIGN · EXPLAINABLE BY DEFAULT</p>
+        <h1>Understand your academic record without uploading it.</h1>
+        <p class="lede">GradeLens calculates GPA from transcript quality points, compares repeat-course scenarios, and helps plan future performance. Everything stays in your browser.</p>
+        <div class="hero-actions"><a class="button primary" href="#workspace">Open workspace</a><button class="button ghost" id="load-demo">Load safe demo</button></div>
+        <ul class="trust-list"><li>No account</li><li>No tracking</li><li>No student-data API</li></ul>
+      </div>
+      <div class="hero-visual" aria-label="Application preview">
+        <div class="signal signal-one"></div><div class="signal signal-two"></div>
+        <div class="metric-card"><span>Current CGPA</span><strong id="hero-cgpa">—</strong><small>Exact from quality points</small></div>
+        <div class="mini-chart" id="hero-chart"></div>
+      </div>
+    </section>
+
+    <section class="workspace" id="workspace">
+      <div class="section-heading"><div><p class="eyebrow">ACADEMIC WORKSPACE</p><h2>Build a transparent calculation</h2></div><p>Your entries are saved only in this browser. Use the demo first if you want to explore without entering personal data.</p></div>
+
+      <div class="toolbar">
+        <button class="button primary" id="add-course">+ Add course</button>
+        <label class="button ghost file-button">Import CSV<input type="file" id="csv-input" accept=".csv,text/csv" hidden /></label>
+        <button class="button ghost" id="export-csv">Export CSV</button>
+        <button class="button danger" id="clear-data">Clear local data</button>
+      </div>
+
+      <div class="dashboard-grid">
+        <aside class="panel controls-panel">
+          <label for="repeat-policy">Repeat-course scenario</label>
+          <select id="repeat-policy">
+            <option value="all">Count all attempts</option>
+            <option value="latest">Count latest attempt</option>
+            <option value="best">Count best attempt</option>
+          </select>
+          <p class="hint">This is a planning comparison, not an official claim about university repeat policy.</p>
+          <div class="divider"></div>
+          <h3>Future scenario</h3>
+          <label for="planned-credits">Planned credit hours</label><input id="planned-credits" type="number" min="0.5" max="30" step="0.5" value="15" />
+          <label for="expected-gp">Expected grade point</label><input id="expected-gp" type="number" min="0" max="4" step="0.01" value="3.5" />
+          <div class="projection"><span>Projected CGPA</span><strong id="projected-cgpa">—</strong></div>
+        </aside>
+
+        <section class="panel records-panel">
+          <div class="summary-grid">
+            <article><span>CGPA</span><strong id="cgpa">—</strong></article>
+            <article><span>Credits counted</span><strong id="credits">0</strong></article>
+            <article><span>Quality points</span><strong id="quality-points">0</strong></article>
+            <article><span>Attempts excluded</span><strong id="excluded">0</strong></article>
+          </div>
+          <div class="table-wrap">
+            <table><thead><tr><th>Semester</th><th>Course</th><th>Credits</th><th>Quality points</th><th>Attempt</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody id="course-rows"></tbody></table>
+            <div class="empty-state" id="empty-state"><div class="empty-icon">∑</div><h3>No academic data yet</h3><p>Add a course, import the CSV template, or load the safe demo.</p></div>
+          </div>
+        </section>
+      </div>
+
+      <section class="panel analytics-panel">
+        <div><p class="eyebrow">SEMESTER VIEW</p><h2>Progress, without hiding the inputs</h2></div>
+        <div class="semester-chart" id="semester-chart"></div>
+      </section>
+    </section>
+
+    <section class="method" id="method">
+      <div><p class="eyebrow">CALCULATION METHOD</p><h2>Simple enough to audit.</h2><p>GradeLens uses the values already printed on a transcript. It does not infer quality points from marks or invent a university policy.</p></div>
+      <ol><li><b>Validate</b><span>Credit hours and quality points are checked for impossible values.</span></li><li><b>Aggregate</b><span>CGPA = total counted quality points ÷ total counted credit hours.</span></li><li><b>Compare</b><span>Repeat rules are clearly labelled as scenarios so you can see their effect.</span></li></ol>
+    </section>
+  </main>
+
+  <dialog id="course-dialog">
+    <form id="course-form" method="dialog">
+      <div class="dialog-head"><div><p class="eyebrow">COURSE ENTRY</p><h2>Add transcript row</h2></div><button type="button" class="icon-button" id="close-dialog" aria-label="Close">×</button></div>
+      <div class="form-grid">
+        <label>Semester<input name="semester" required placeholder="e.g. Fall 2025" /></label>
+        <label>Course code<input name="code" required placeholder="e.g. CS-410" /></label>
+        <label class="full">Course title<input name="title" required placeholder="e.g. Data Structures and Algorithms" /></label>
+        <label>Credit hours<input name="creditHours" type="number" min="0.5" max="10" step="0.5" required /></label>
+        <label>Quality points<input name="qualityPoints" type="number" min="0" max="40" step="0.01" required /></label>
+        <label>Attempt<input name="attempt" type="number" min="1" step="1" value="1" required /></label>
+      </div>
+      <p class="form-error" id="form-error" role="alert"></p>
+      <div class="dialog-actions"><button type="button" class="button ghost" id="cancel-dialog">Cancel</button><button class="button primary" type="submit">Save course</button></div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <footer><div><span class="brand-mark">G</span><strong>GradeLens UAF</strong></div><p>Independent planning tool. Not affiliated with or endorsed by the University of Agriculture Faisalabad.</p><a href="https://github.com/zasclan/gradelens-uaf">View source ↗</a></footer>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
